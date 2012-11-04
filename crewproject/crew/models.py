@@ -18,11 +18,19 @@ class Team(TimeStampedModel):
 class Role(TimeStampedModel):
 	"""A Role is user defineable to give flexibility in how you structure your project."""
 	name = models.CharField(_("Role"), max_length="30", null=True, blank=True)
+	read = models.BooleanField(_("Read"))
+	write = models.BooleanField(_("Write"))
+	admin = models.BooleanField(_("Admin"))
 
 
 class Membership(models.Model):
 	"""This is the linking table for definig who is on a team and what their role on the team is.  A use may only have one Role per team."""
 	user = models.ForeignKey(User)
     team = models.ForeignKey(Team)
-
 	role = models.ForeignKey(Role)
+
+    class Meta:
+        ordering = ['team__name', 'user__username']
+
+    def __unicode__(self):
+    	return "%s is a %s on %s" % (self.user, self.role, self.team)
